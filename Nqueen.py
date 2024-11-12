@@ -1,81 +1,41 @@
-# Function to check if a queen can be placed on the board
-def is_safe(board, row, col):
-    # Check this column on upper side
-    for i in range(row):
-        if board[i][col] == 1:
-            return False
+def solve_n_queen_bnb(n):#This function sets up and starts the branch and bound solution for the N-Queens problem with a given board size n
+    # Initialize arrays to keep track of occupied columns and diagonals
+    column_used = [False] * n           # Tracks occupied columns,column_used: This array tracks whether each column has a queen. column_used[i] is True if a queen is already placed in column i
+    diag1_used = [False] * (2 * n - 1)   # Tracks "/" diagonals (index calculated as row + col)
+    diag2_used = [False] * (2 * n - 1)   # Tracks "\" diagonals (row - col + n - 1)
+    solutions = []                       #A list to store valid board configurations.
+    board = [-1] * n                     # Represents queen positions by column in each row
 
-    # Check upper diagonal on left side
-    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
-        if board[i][j] == 1:
-            return False
+    def solve(row):                      #The recursive solve function attempts to place queens row by row
+        if row == n:                     # Base case: all queens are placed
+            solutions.append(board[:])    # Add a valid solution
+            return
 
-    # Check upper diagonal on right side
-    for i, j in zip(range(row, -1, -1), range(col, len(board))):
-        if board[i][j] == 1:
-            return False
+        for col in range(n): #This loop tries placing a queen in each column of the current row.
+            if not column_used[col] and not diag1_used[row + col] and not diag2_used[row - col + n - 1]:
+                # Place the queen and mark the column and diagonals as used
+                board[row] = col
+                column_used[col] = diag1_used[row + col] = diag2_used[row - col + n - 1] = True
 
-    return True
+                solve(row + 1)            # Recur to place the next queen
 
+                # Backtrack: remove the queen and unmark the column and diagonals
+                column_used[col] = diag1_used[row + col] = diag2_used[row - col + n - 1] = False
 
-# Backtracking function to place remaining queens
-def solve_queen(board, row):
-    n = len(board)
+    solve(0)  # Start solving from row 0
+    return solutions #Call solve(0) to start placing queens from the first row, then return all solutions found
 
-    # Base case: If all queens are placed
-    if row >= n:
-        return True
+def print_solutions(solutions, n):
+    for sol in solutions:
+        print("Solution:")
+        for row in range(n):
+            line = ['.'] * n
+            line[sol[row]] = 'Q'
+            print(" ".join(line))
+        print()
 
-    # Try placing queen in all columns for the current row
-    for col in range(n):
-        if is_safe(board, row, col):
-            # Place queen
-            board[row][col] = 1
-
-            # Recur to place the rest of the queens
-            if solve_queen(board, row + 1):
-                return True
-
-            # Backtrack (remove the queen if placing it here leads to a failure)
-            board[row][col] = 0
-
-    # If no column could be found, return False (backtrack)
-    return False
-
-
-# Function to print the board
-def print_board(board):
-    for row in board:
-        print(" ".join("Q" if x == 1 else "." for x in row))
-    print("\n")
-
-
-# Function to solve the N-Queen problem
-def solve_n_queen(n):
-    # Initialize the NxN chessboard
-    board = [[0 for _ in range(n)] for _ in range(n)]
-
-    # Start solving from row 0 (placing first queen here)
-    if solve_queen(board, 0):
-        print("Final {}-Queen Matrix:".format(n))
-        print_board(board)
-    else:
-        print("Solution does not exist for {} queens.".format(n))
-
-
-# Example usage:
+# Example usage
 n = int(input("Enter the number of queens (n): "))
-solve_n_queen(n)
-
-#output:
-'''Enter the number of queens (n):  8
-Final 8-Queen Matrix:
-Q . . . . . . .
-. . . . Q . . .
-. . . . . . . Q
-. . . . . Q . .
-. . Q . . . . .
-. . . . . . Q .
-. Q . . . . . .
-. . . Q . . . .
-'''
+solutions = solve_n_queen_bnb(n)
+print(f"\nTotal solutions for {n}-Queens problem: {len(solutions)}")
+print_solutions(solutions, n)

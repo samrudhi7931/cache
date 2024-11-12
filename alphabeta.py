@@ -2,28 +2,28 @@ MAX = 1000
 MIN = -1000
 
 # Minimax function with Alpha-Beta pruning
-def minimax(depth, node_index, maximizing_player, values, alpha, beta):
+def minimax(depth, node_index, maximizing_player, values, alpha, beta):#minimax is a recursive function to evaluate the optimal value for the root node at depth 0
     # Base case: if depth reaches 3, return the value at the current node
     if depth == 3:
         return values[node_index]
 
-    if maximizing_player:
-        best = MIN
+    if maximizing_player:#When maximizing_player is True, this block runs
+        best = MIN#best is initialized to MIN to seek the highest score
         # Explore both child nodes (left and right)
         for i in range(2):
-            val = minimax(depth + 1, node_index * 2 + i, False, values, alpha, beta)
-            best = max(best, val)
+            val = minimax(depth + 1, node_index * 2 + i, False, values, alpha, beta)#depth + 1 increases the depth by 1 for the child nodes,node_index * 2 + i calculates the index of the child nodes,False indicates the next level is a minimizing player
+            best = max(best, val)#After each recursive call, best is updated to the maximum of best and the returned val
             alpha = max(alpha, best)
             
             # Alpha-Beta pruning: if beta is less than or equal to alpha, break out of the loop
             if beta <= alpha:
                 break
         return best
-    else:
+    else:#This block is executed when maximizing_player is False
         best = MAX
         # Explore both child nodes (left and right)
         for i in range(2):
-            val = minimax(depth + 1, node_index * 2 + i, True, values, alpha, beta)
+            val = minimax(depth + 1, node_index * 2 + i, True, values, alpha, beta)# it explores both child nodes and updates best to the minimum value found.
             best = min(best, val)
             beta = min(beta, best)
 

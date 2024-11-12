@@ -2,7 +2,7 @@
 player, opponent = 'x', 'o'
 
 # Function to check if there are moves left on the board
-def isMovesLeft(board):
+def isMovesLeft(board):#This function checks whether there are any empty spaces ('_') left on the board. It returns True if there are moves left, otherwise False
     for row in board:
         if '_' in row:
             return True
@@ -45,7 +45,7 @@ def evaluate(board):
 
 # Minimax function
 def minimax(board, depth, isMax):
-    score = evaluate(board)
+    score = evaluate(board) #First, it checks the current score using evaluate(board). If a player has won, it returns the score immediatel
 
     # If the player has won, return the score
     if score == 10:
@@ -59,7 +59,7 @@ def minimax(board, depth, isMax):
     if not isMovesLeft(board):
         return 0
 
-    # If it's the player's turn (maximizer)
+    # If it's the player's turn (maximizer).If isMax is True, it initializes best to -1000, iterates over empty cells, and tries placing the player’s symbol (player). It calls minimax() recursively, updating best to the maximum value
     if isMax:
         best = -1000
         for i in range(3):
@@ -70,7 +70,7 @@ def minimax(board, depth, isMax):
                     board[i][j] = '_'
         return best
 
-    # If it's the opponent's turn (minimizer)
+    # If it's the opponent's turn (minimizer).If isMax is False, it initializes best to 1000, places the opponent’s symbol, and calls minimax() recursively, updating best to the minimum value
     else:
         best = 1000
         for i in range(3):
@@ -88,6 +88,7 @@ def findBestMove(board):
     bestMove = (-1, -1)
 
     for i in range(3):
+        
         for j in range(3):
             if board[i][j] == '_':
                 board[i][j] = player
